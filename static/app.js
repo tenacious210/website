@@ -6,3 +6,5 @@ button.onclick = function () {
     window.location = window.location.pathname + "?user=" + text;
     return false;
 }
+
+document.getElementById('light-dark-mode-toggle').addEventListener('click', () => localStorage.setItem('theme', document.body.classList.toggle('dark-mode') ? 'dark' : 'light'));
