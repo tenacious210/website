@@ -1,0 +1,79 @@
+body {
+    --bs-body-bg-bg: #fff;
+    --bs-light-bg: #f8f9fa;
+    --full-color: #fff;
+    --full-inverse-color: #000;
+    --light-color: #e5e5e5;
+    --primary-highlight-color: #5b9bd1;
+    --primary-highlight-bg: #f2f6f9;
+}
+
+body.dark-mode {
+    --bs-body-color: #ccc;
+    --bs-body-bg-bg: #1e1e1e;
+    --bs-body-bg: #222;
+    --bs-light-bg: #333;
+    --bs-dark-rgb: 222,218,214;
+    --full-color: #000;
+    --full-inverse-color: #FFF;
+    --light-color: #3e3e3e;
+    --primary-highlight-color: #5b9bd1;
+    --primary-highlight-bg: #363f46;
+}
+
+body {
+    background-color: var(--bs-body-bg-bg);
+    color: var(--bs-body-color);
+}
+.light-dark-mode-toggle {
+    width: 50px;
+    height: 27px;
+    border-radius: 50px;
+    background-color: var(--light-color);
+    position: relative;
+    cursor: pointer;
+    margin-right: 1.5rem;
+}
+.light-dark-mode-toggle::after {
+    content: '🌒';
+    font-size: 1.5em;
+    position: absolute;
+    top: -6px;
+    left: -5px;
+    transition: left 200ms ease-in-out;
+}
+.dark-mode .light-dark-mode-toggle::after {
+    content: '🌞';
+    left: 20px;
+    font-size: 1.8em;
+    top: -9px;
+}
+.light-dark-mode-toggle:hover {
+    filter: brightness(0.9);
+}
+
+.navbar {
+    box-shadow: 0px 2px 3px 2px rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid var(--light-color);
+    box-shadow: 0 0 0 rgba(0,0,0,.1),0 0 1px rgba(0,0,0,.18);
+    background-color: var(--bs-body-bg);
+}
+.bg-light {
+    background-color: var(--bs-light-color) !important;
+}
+.navbar-brand {
+    color: var(--full-inverse-color) !important;
+    opacity: 0.9;
+}
+.navbar-brand:hover, .nav-link:hover {
+    opacity: 1;
+}
+.form-control, .form-control:focus, .form-select, .form-select:focus {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border-color: var(--light-color);
+}
+.nav-link {
+    color: var(--bs-body-color) !important;
+    opacity: 0.8;
+}
