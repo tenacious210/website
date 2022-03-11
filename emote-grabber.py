@@ -1,5 +1,4 @@
 from datetime import timedelta, date
-from time import sleep
 import requests
 import sqlite3
 import re
@@ -48,9 +47,6 @@ def update_emote_stats():
             [f",'{emote_count}'" for emote_count in emote_dict.values()]
         )
         emote_db_cur.execute(f"INSERT INTO LastMonth ({db_keys}) VALUES ({db_values})")
-    emote_db_cur.execute("CREATE TABLE IF NOT EXISTS LastMonthRanks)")
-    emote_db_cur.execute("DELETE FROM LastMonthRanks")
-    emote_db_cur.execute("SELECT * INTO LastMonthRanks FROM LastMonth WHERE 1 = 2")
     emote_db_con.commit()
     emote_db_con.close()
     print("Database updated successfully.")

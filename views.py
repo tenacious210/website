@@ -1,4 +1,3 @@
-from cgitb import html
 from flask import Blueprint, render_template, request
 import sqlite3
 import requests
