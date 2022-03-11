@@ -6,12 +6,12 @@
 
 {% block search %}
 <form class="form-inline my-2 my-lg-0">
-    <input class="form-control mr-sm-2" type="search" placeholder="Search for a user..." aria-label="Search">
-    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    <input class="form-control mr-sm-2" type="search" placeholder="Search for a user..." aria-label="Search" id="usersearch">
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="usersearchbtn">Search</button>
 </form>
 {% endblock %}
 
 {% block content %}
-<div align="center"><h1>Emote champions of the month</h1></div>
+<div align="center"><h1>{{header|safe}}</h1></div>
 {{content|safe}}
 {% endblock %}
