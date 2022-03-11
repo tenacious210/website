@@ -1,4 +1,6 @@
 from datetime import timedelta, date
+from time import sleep
+import schedule
 import requests
 import sqlite3
 import re
@@ -53,4 +55,10 @@ def update_emote_stats():
 
 
 if __name__ == "__main__":
-    update_emote_stats()
+    if debug:
+        update_emote_stats()
+    else:
+        schedule.every().day.at("12:00").do(update_emote_stats)
+        while True:
+            schedule.run_pending()
+            sleep(300)
