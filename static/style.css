@@ -35,7 +35,7 @@ body {
     margin-right: 1.5rem;
 }
 .light-dark-mode-toggle::after {
-    content: '🌒';
+    content: '🌞';
     font-size: 1.5em;
     position: absolute;
     top: -6px;
@@ -43,7 +43,7 @@ body {
     transition: left 200ms ease-in-out;
 }
 .dark-mode .light-dark-mode-toggle::after {
-    content: '🌞';
+    content: '🌒';
     left: 20px;
     font-size: 1.8em;
     top: -9px;
