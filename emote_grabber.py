@@ -1,11 +1,7 @@
 from datetime import timedelta, date
-from time import sleep
-import schedule
 import requests
 import sqlite3
 import re
-
-debug = False
 
 
 def daterange(start_date, end_date):
@@ -19,7 +15,7 @@ def update_emote_stats():
     user_emotes = {}
     today = date.today()
     tomorrow = today + timedelta(days=1)
-    thirty_days_ago = today - timedelta(days=30 if not debug else 2)
+    thirty_days_ago = today - timedelta(days=30)
     for days in daterange(thirty_days_ago, tomorrow):
         year, month_num, month_name, day = days.strftime("%Y %m %B %d").split()
         rustle_url = f"https://dgg.overrustlelogs.net/Destinygg%20chatlog/{month_name}%20{year}/{year}-{month_num}-{day}.txt"
@@ -32,7 +28,7 @@ def update_emote_stats():
                     user_emotes[user] = {emote: 0 for emote in emotes}
                 for emote in emotes:
                     user_emotes[user][emote] += len(re.findall(rf"\b{emote}\b", log))
-    emote_db_con = sqlite3.connect("user_emotes.db" if not debug else "test.db")
+    emote_db_con = sqlite3.connect("user_emotes.db")
     # Will create the .db file if it doesn't exist
     emote_db_cur = emote_db_con.cursor()
     emote_db_cur.execute(
@@ -53,12 +49,3 @@ def update_emote_stats():
     emote_db_con.close()
     print("Database updated successfully.")
 
-
-if __name__ == "__main__":
-    if debug:
-        update_emote_stats()
-    else:
-        schedule.every().day.at("12:00").do(update_emote_stats)
-        while True:
-            schedule.run_pending()
-            sleep(300)
