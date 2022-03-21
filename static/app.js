@@ -1,6 +1,6 @@
 var button = document.getElementById("usersearchbtn");
 
-if(button) {
+if (button) {
     button.onclick = function () {
         var text = document.getElementById("usersearch").value;
         console.log(window.location.pathname + "?user=" + text);
