@@ -153,5 +153,5 @@ cython_debug/
 
 #Other
 .theia/
-*.db
+# *.db
 lastupdate.txt
