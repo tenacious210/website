@@ -12,8 +12,8 @@ def get_emotes_user(username, number_of_days=30):
     cur = con.cursor()
     cmd = f"SELECT UserName FROM EmoteStats WHERE LOWER(UserName)='{username.lower()}'"
     target_day = datetime.today() - timedelta(days=number_of_days)
-    if user_raw := cur.execute(cmd):
-        user = user_raw.fetchall()[0][0]
+    if user_raw := cur.execute(cmd).fetchall():
+        user = user_raw[0][0]
         sql_date = target_day.strftime("%Y-%m-%d")
         cmd = (
             f"SELECT * FROM EmoteStats WHERE UserName='{user}' "
