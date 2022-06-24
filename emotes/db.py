@@ -7,9 +7,10 @@ def daterange(start_date, end_date):
         yield start_date + timedelta(n)
 
 
-def get_emotes_user(username, number_of_days=30):
+def get_emotes_user(username, number_of_days=30, amount=None):
     con = sqlite3.connect("emote_stats.db", detect_types=sqlite3.PARSE_DECLTYPES)
     cur = con.cursor()
+    emotes = [i[1] for i in cur.execute("PRAGMA table_info(EmoteStats)")][2:]
     cmd = f"SELECT UserName FROM EmoteStats WHERE LOWER(UserName)='{username.lower()}'"
     target_day = datetime.today() - timedelta(days=number_of_days)
     if user_raw := cur.execute(cmd).fetchall():
@@ -30,12 +31,16 @@ def get_emotes_user(username, number_of_days=30):
                 i += 1
         user_stats_unsorted.pop("UserName")
         user_stats_unsorted.pop("Date")
-        user_stats = {
-            k: v
-            for k, v in sorted(
-                user_stats_unsorted.items(), key=lambda i: i[1], reverse=True
-            )
-        }
+        if not amount:
+            amount = len(emotes)
+        user_stats = {}
+        for k, v in sorted(
+            user_stats_unsorted.items(), key=lambda i: i[1], reverse=True
+        ):
+            if len(user_stats) < amount:
+                user_stats[k] = v
+            else:
+                break
     else:
         user_stats = None
     con.close()

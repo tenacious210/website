@@ -29,7 +29,14 @@ def emotes():
 @views.route("/api/emotes")
 def api():
     if user := request.args.get("user"):
-        payload = jsonify(get_emotes_user(user))
+        if amount := request.args.get("amount"):
+            try:
+                amount = int(amount)
+            except ValueError:
+                amount = None
+            payload = jsonify(get_emotes_user(user, amount=amount))
+        else:
+            payload = jsonify(get_emotes_user(user))
     elif emote := request.args.get("emote"):
         if amount := request.args.get("amount"):
             try:
