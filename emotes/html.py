@@ -1,9 +1,33 @@
 from dominate.tags import *
 from .db import *
-from flask import render_template
+from flask import render_template, request, jsonify
 import requests
 
 emote_json = requests.get("https://cdn.destiny.gg/emotes/emotes.json").json()
+
+
+def user_api(user):
+    if amount := request.args.get("amount"):
+        try:
+            amount = int(amount)
+        except ValueError:
+            amount = None
+        payload = jsonify(get_emotes_user(user, amount=amount))
+    else:
+        payload = jsonify(get_emotes_user(user))
+    return payload
+
+
+def top_api(emote):
+    if amount := request.args.get("amount"):
+        try:
+            amount = int(amount)
+        except ValueError:
+            amount = 100
+        payload = jsonify(get_emote_top_posters(emote, ranks=int(amount)))
+    else:
+        payload = jsonify(get_emote_top_posters(emote))
+    return payload
 
 
 def emote_to_html(emote):
@@ -28,7 +52,7 @@ def emote_to_html(emote):
     return html
 
 
-def emotes_user(user):
+def user_page(user):
     if top_emotes := get_emotes_user(user):
         with div(cls="container") as container:
             with div(cls="row justify-content-center"):
@@ -54,7 +78,7 @@ def emotes_user(user):
     return payload
 
 
-def emotes_top100(emote):
+def top100_page(emote):
     if top100 := get_emote_top_posters(emote):
         with div(cls="container") as container:
             with div(cls="row justify-content-center"):
@@ -84,7 +108,7 @@ def emotes_top100(emote):
     return payload
 
 
-def emotes_top5s(number_of_days=30):
+def top5s_page(number_of_days=30):
     with div(cls="container") as container:
         with div(cls="row justify-content-center"):
             div(b("Emote"), cls="col-1 py-1", align="center")

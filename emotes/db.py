@@ -7,6 +7,14 @@ def daterange(start_date, end_date):
         yield start_date + timedelta(n)
 
 
+def get_current_emotes():
+    con = sqlite3.connect("emote_stats.db", detect_types=sqlite3.PARSE_DECLTYPES)
+    cur = con.cursor()
+    emotes = [i[1] for i in cur.execute("PRAGMA table_info(EmoteStats)")][2:]
+    con.close()
+    return emotes
+
+
 def get_emotes_user(username, number_of_days=30, amount=None):
     con = sqlite3.connect("emote_stats.db", detect_types=sqlite3.PARSE_DECLTYPES)
     cur = con.cursor()
@@ -57,23 +65,14 @@ def get_emote_top_posters(emote, ranks=100, number_of_days=30):
     target_day = datetime.today() - timedelta(days=number_of_days)
     sql_date = target_day.strftime("%Y-%m-%d")
     cmd = (
-        f"SELECT UserName,{emote} FROM EmoteStats "
-        f"WHERE Date>DATE('{sql_date}') AND {emote}>0"
+        f"SELECT UserName,SUM({emote}) FROM EmoteStats "
+        f"WHERE Date>DATE('{sql_date}') AND {emote}>0 "
+        f"GROUP BY UserName ORDER BY SUM({emote}) DESC "
+        f"LIMIT {ranks}"
     )
-    day_stats = cur.execute(cmd)
-    stats_unsorted = {}
-    for username, amount in day_stats:
-        if username not in stats_unsorted.keys():
-            stats_unsorted[username] = 0
-        stats_unsorted[username] += amount
-    top_posters = {}
-    for k, v in sorted(stats_unsorted.items(), key=lambda i: i[1], reverse=True):
-        if len(top_posters) < ranks:
-            top_posters[k] = v
-        else:
-            break
+    day_stats = cur.execute(cmd).fetchall()
     con.close()
-    return top_posters
+    return {u: a for u, a in day_stats}
 
 
 def get_emote_top5s(number_of_days=30):

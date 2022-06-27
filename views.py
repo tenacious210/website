@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify
-from emotes.html import emotes_user, emotes_top5s, emotes_top100
-from emotes.db import get_emote_top5s, get_emote_top_posters, get_emotes_user
+from emotes.html import user_page, top5s_page, top100_page, user_api, top_api
+from emotes.db import get_emote_top5s
 
 views = Blueprint(__name__, "views")
 top5s_page_cached = None
@@ -15,13 +15,13 @@ def index():
 @views.route("/emotes")
 def emotes():
     if user := request.args.get("user"):
-        payload = emotes_user(user)
+        payload = user_page(user)
     elif emote := request.args.get("emote"):
-        payload = emotes_top100(emote)
+        payload = top100_page(emote)
     else:
         global top5s_page_cached
         if not top5s_page_cached:
-            top5s_page_cached = emotes_top5s()
+            top5s_page_cached = top5s_page()
         payload = top5s_page_cached
     return payload
 
@@ -29,26 +29,12 @@ def emotes():
 @views.route("/api/emotes")
 def api():
     if user := request.args.get("user"):
-        if amount := request.args.get("amount"):
-            try:
-                amount = int(amount)
-            except ValueError:
-                amount = None
-            payload = jsonify(get_emotes_user(user, amount=amount))
-        else:
-            payload = jsonify(get_emotes_user(user))
+        return user_api(user)
     elif emote := request.args.get("emote"):
-        if amount := request.args.get("amount"):
-            try:
-                amount = int(amount)
-            except ValueError:
-                amount = 100
-            payload = jsonify(get_emote_top_posters(emote, ranks=int(amount)))
-        else:
-            payload = jsonify(get_emote_top_posters(emote))
+        return top_api(emote)
     else:
         global top5s_cached
         if not top5s_cached:
             top5s_cached = get_emote_top5s()
-        payload = top5s_cached
+        payload = jsonify(top5s_cached)
     return payload
