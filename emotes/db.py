@@ -37,15 +37,13 @@ def get_emotes_user(username, number_of_days=30, amount=None):
                 if f not in ("UserName", "Date"):
                     user_stats_unsorted[f] += day[i]
                 i += 1
-        user_stats_unsorted.pop("UserName")
-        user_stats_unsorted.pop("Date")
         if not amount:
-            amount = len(emotes)
+            amount = len(user_stats_unsorted)
         user_stats = {}
         for k, v in sorted(
             user_stats_unsorted.items(), key=lambda i: i[1], reverse=True
         ):
-            if len(user_stats) < amount:
+            if len(user_stats) < amount and v > 0:
                 user_stats[k] = v
             else:
                 break
