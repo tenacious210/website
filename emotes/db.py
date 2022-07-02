@@ -34,7 +34,7 @@ def get_emotes_user(username, number_of_days=30, amount=None):
         for day in emotes_by_day:
             i = 0
             for f in fields:
-                if f not in ("UserName", "Date"):
+                if isinstance(day[i], int):
                     user_stats_unsorted[f] += day[i]
                 i += 1
         if not amount:
