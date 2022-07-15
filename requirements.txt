@@ -1,4 +1,4 @@
+google-cloud-storage
 flask
 requests
-google-cloud-storage
 dominate
