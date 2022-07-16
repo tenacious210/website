@@ -1,5 +1,9 @@
 import sqlite3
+import requests
 from datetime import datetime, timedelta
+
+emote_json = requests.get("https://cdn.destiny.gg/emotes/emotes.json").json()
+emotes = [e["prefix"] for e in emote_json]
 
 
 def daterange(start_date, end_date):
@@ -7,18 +11,9 @@ def daterange(start_date, end_date):
         yield start_date + timedelta(n)
 
 
-def get_current_emotes():
-    con = sqlite3.connect("emote_stats.db", detect_types=sqlite3.PARSE_DECLTYPES)
-    cur = con.cursor()
-    emotes = [i[1] for i in cur.execute("PRAGMA table_info(EmoteStats)")][2:]
-    con.close()
-    return emotes
-
-
 def get_emotes_user(username, number_of_days=30, amount=None):
     con = sqlite3.connect("emote_stats.db", detect_types=sqlite3.PARSE_DECLTYPES)
     cur = con.cursor()
-    emotes = [i[1] for i in cur.execute("PRAGMA table_info(EmoteStats)")][2:]
     cmd = f"SELECT UserName FROM EmoteStats WHERE LOWER(UserName)='{username.lower()}'"
     target_day = datetime.today() - timedelta(days=number_of_days)
     if user_raw := cur.execute(cmd).fetchall():
@@ -34,7 +29,7 @@ def get_emotes_user(username, number_of_days=30, amount=None):
         for day in emotes_by_day:
             i = 0
             for f in fields:
-                if isinstance(day[i], int):
+                if isinstance(day[i], int) and f in emotes:
                     user_stats_unsorted[f] += day[i]
                 i += 1
         if not amount:
@@ -56,7 +51,6 @@ def get_emotes_user(username, number_of_days=30, amount=None):
 def get_emote_top_posters(emote, ranks=100, number_of_days=30):
     con = sqlite3.connect("emote_stats.db", detect_types=sqlite3.PARSE_DECLTYPES)
     cur = con.cursor()
-    emotes = [i[1] for i in cur.execute("PRAGMA table_info(EmoteStats)")][2:]
     if emote not in emotes:
         con.close()
         return None
@@ -74,9 +68,6 @@ def get_emote_top_posters(emote, ranks=100, number_of_days=30):
 
 
 def get_emote_top5s(number_of_days=30):
-    con = sqlite3.connect("emote_stats.db", detect_types=sqlite3.PARSE_DECLTYPES)
-    cur = con.cursor()
-    emotes = [i[1] for i in cur.execute("PRAGMA table_info(EmoteStats)")][2:]
     top5s_unsorted = {}
     for emote in emotes:
         top5 = get_emote_top_posters(emote, ranks=5, number_of_days=number_of_days)
@@ -90,5 +81,4 @@ def get_emote_top5s(number_of_days=30):
     top5s_by_value = [
         e[0] for e in reversed(sorted(top5s_values.items(), key=lambda i: i[1]))
     ]
-    con.close()
     return {e: top5s_unsorted[e] for e in top5s_by_value}
