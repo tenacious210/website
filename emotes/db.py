@@ -14,16 +14,15 @@ def daterange(start_date, end_date):
 def get_emotes_user(username, number_of_days=30, amount=None):
     con = sqlite3.connect("emote_stats.db", detect_types=sqlite3.PARSE_DECLTYPES)
     cur = con.cursor()
-    cmd = f"SELECT UserName FROM EmoteStats WHERE LOWER(UserName)='{username.lower()}'"
+    cmd = "SELECT UserName FROM EmoteStats WHERE LOWER(UserName)=:user"
+    params = {"user": username.lower()}
     target_day = datetime.today() - timedelta(days=number_of_days)
-    if user_raw := cur.execute(cmd).fetchall():
+    if user_raw := cur.execute(cmd, params).fetchall():
         user = user_raw[0][0]
         sql_date = target_day.strftime("%Y-%m-%d")
-        cmd = (
-            f"SELECT * FROM EmoteStats WHERE UserName='{user}' "
-            f"AND Date>=DATE('{sql_date}')"
-        )
-        emotes_by_day = cur.execute(cmd)
+        cmd = "SELECT * FROM EmoteStats WHERE UserName=:user AND Date>=DATE(:sql_date)"
+        params = {"user": user, "sql_date": sql_date}
+        emotes_by_day = cur.execute(cmd, params)
         fields = [f[0] for f in emotes_by_day.description]
         user_stats_unsorted = {f: 0 for f in fields}
         for day in emotes_by_day:
@@ -58,7 +57,7 @@ def get_emote_top_posters(emote, ranks=100, number_of_days=30):
     sql_date = target_day.strftime("%Y-%m-%d")
     cmd = (
         f"SELECT UserName,SUM({emote}) FROM EmoteStats "
-        f"WHERE Date>DATE('{sql_date}') AND {emote}>0 "
+        f"WHERE Date > DATE('{sql_date}') AND {emote} > 0 "
         f"GROUP BY UserName ORDER BY SUM({emote}) DESC "
         f"LIMIT {ranks}"
     )
