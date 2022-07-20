@@ -1,9 +1,17 @@
 import sqlite3
 import requests
 from datetime import datetime, timedelta
+from requests import JSONDecodeError
 
-emote_json = requests.get("https://cdn.destiny.gg/emotes/emotes.json").json()
-emotes = [e["prefix"] for e in emote_json]
+try:
+    emote_json = requests.get("https://cdn.destiny.gg/emotes/emotes.json").json()
+except JSONDecodeError:
+    emote_json = {}
+
+if emote_json:
+    emotes = [e["prefix"] for e in emote_json]
+else:
+    emotes = []
 
 
 def daterange(start_date, end_date):

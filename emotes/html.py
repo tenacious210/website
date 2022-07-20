@@ -2,8 +2,12 @@ from dominate.tags import *
 from .db import *
 from flask import render_template, request, jsonify
 import requests
+from requests import JSONDecodeError
 
-emote_json = requests.get("https://cdn.destiny.gg/emotes/emotes.json").json()
+try:
+    emote_json = requests.get("https://cdn.destiny.gg/emotes/emotes.json").json()
+except JSONDecodeError:
+    emote_json = {}
 
 
 def user_api(user):
