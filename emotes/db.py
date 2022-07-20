@@ -65,7 +65,7 @@ def get_emote_top_posters(emote, ranks=100, number_of_days=30):
     sql_date = target_day.strftime("%Y-%m-%d")
     cmd = (
         f"SELECT UserName,SUM({emote}) FROM EmoteStats "
-        f"WHERE Date > DATE('{sql_date}') AND {emote} > 0 "
+        f"WHERE Date >= DATE('{sql_date}') AND {emote} > 0 "
         f"GROUP BY UserName ORDER BY SUM({emote}) DESC "
         f"LIMIT {ranks}"
     )
