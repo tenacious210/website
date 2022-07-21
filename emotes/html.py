@@ -3,6 +3,7 @@ from .db import *
 from flask import render_template, request, jsonify
 import requests
 from requests import JSONDecodeError
+from re import match
 
 try:
     emote_json = requests.get("https://cdn.destiny.gg/emotes/emotes.json").json()
@@ -11,6 +12,8 @@ except JSONDecodeError:
 
 
 def user_api(user):
+    if not match(r"^[\w]+$", user):
+        return jsonify(None)
     if amount := request.args.get("amount"):
         try:
             amount = int(amount)
@@ -57,6 +60,8 @@ def emote_to_html(emote):
 
 
 def user_page(user):
+    if not match(r"^[\w]+$", user):
+        user = "?"
     if top_emotes := get_emotes_user(user):
         with div(cls="container") as container:
             with div(cls="row justify-content-center"):
@@ -72,7 +77,7 @@ def user_page(user):
                     div(amount, cls="col-2 py-1", align="center")
                     div(cls="w-100")
     else:
-        container = "Couldn't find that user"
+        container = p("Couldn't find that user", align="center")
     payload = render_template(
         "emotes.html",
         title="user emote",
@@ -102,7 +107,7 @@ def top100_page(emote):
                     div(amount, cls="col-2 py-1", align="center")
                     div(cls="w-100")
     else:
-        container = "Couldn't find that emote"
+        container = p("Couldn't find that emote", align="center")
     payload = render_template(
         "emotes.html",
         title="emote",
