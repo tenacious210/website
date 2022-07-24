@@ -11,6 +11,10 @@ except JSONDecodeError:
     emote_json = {}
 
 
+def top5s_api():
+    return jsonify(get_emote_top5s())
+
+
 def user_api(user):
     if not match(r"^[\w]+$", user):
         return jsonify(None)
@@ -87,7 +91,7 @@ def user_page(user):
     return payload
 
 
-def top100_page(emote):
+def top_page(emote):
     if top100 := get_emote_top_posters(emote):
         with div(cls="container") as container:
             with div(cls="row justify-content-center"):

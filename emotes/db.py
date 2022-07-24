@@ -2,6 +2,7 @@ import sqlite3
 import requests
 from datetime import datetime, timedelta
 from requests import JSONDecodeError
+import json
 
 try:
     emote_json = requests.get("https://cdn.destiny.gg/emotes/emotes.json").json()
@@ -75,10 +76,12 @@ def get_emote_top_posters(emote, ranks=100, number_of_days=30):
 
 
 def get_emote_top5s(number_of_days=30):
-    top5s_unsorted = {}
-    for emote in emotes:
-        top5 = get_emote_top_posters(emote, ranks=5, number_of_days=number_of_days)
-        top5s_unsorted[emote] = top5
+    con = sqlite3.connect("emote_stats.db", detect_types=sqlite3.PARSE_DECLTYPES)
+    cur = con.cursor()
+    top5s_unsorted = {
+        e: json.loads(t5)
+        for e, t5 in cur.execute("SELECT * FROM TopPosters").fetchall()
+    }
     top5s_values = {}
     for emote, top5 in top5s_unsorted.items():
         weight = 0
