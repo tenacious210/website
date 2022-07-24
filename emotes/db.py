@@ -56,7 +56,7 @@ def get_emotes_user(username, number_of_days=30, amount=None):
     return user_stats
 
 
-def get_emote_top_posters(emote, ranks=100, number_of_days=30):
+def get_emote_top_posters(emote, number_of_days=30, amount=100):
     con = sqlite3.connect("emote_stats.db", detect_types=sqlite3.PARSE_DECLTYPES)
     cur = con.cursor()
     if emote not in emotes:
@@ -68,14 +68,14 @@ def get_emote_top_posters(emote, ranks=100, number_of_days=30):
         f"SELECT UserName,SUM({emote}) FROM EmoteStats "
         f"WHERE Date >= DATE('{sql_date}') AND {emote} > 0 "
         f"GROUP BY UserName ORDER BY SUM({emote}) DESC "
-        f"LIMIT {ranks}"
+        f"LIMIT {amount}"
     )
     day_stats = cur.execute(cmd).fetchall()
     con.close()
     return {u: a for u, a in day_stats}
 
 
-def get_emote_top5s(number_of_days=30):
+def get_emote_top5s(amount=None):
     con = sqlite3.connect("emote_stats.db", detect_types=sqlite3.PARSE_DECLTYPES)
     cur = con.cursor()
     top5s_unsorted = {
@@ -91,4 +91,12 @@ def get_emote_top5s(number_of_days=30):
     top5s_by_value = [
         e[0] for e in reversed(sorted(top5s_values.items(), key=lambda i: i[1]))
     ]
-    return {e: top5s_unsorted[e] for e in top5s_by_value}
+    if amount:
+        top5s = {}
+        for e in top5s_by_value:
+            top5s[e] = top5s_unsorted[e]
+            if len(top5s) == amount:
+                break
+    else:
+        top5s = {e: top5s_unsorted[e] for e in top5s_by_value}
+    return top5s

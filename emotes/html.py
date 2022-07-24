@@ -12,7 +12,12 @@ except JSONDecodeError:
 
 
 def top5s_api():
-    return jsonify(get_emote_top5s())
+    if amount := request.args.get("amount"):
+        try:
+            amount = int(amount)
+        except ValueError:
+            amount = None
+    return jsonify(get_emote_top5s(amount=amount))
 
 
 def user_api(user):
@@ -35,7 +40,7 @@ def top_api(emote):
             amount = int(amount)
         except ValueError:
             amount = 100
-        payload = jsonify(get_emote_top_posters(emote, ranks=int(amount)))
+        payload = jsonify(get_emote_top_posters(emote, amount=amount))
     else:
         payload = jsonify(get_emote_top_posters(emote))
     return payload
@@ -121,14 +126,14 @@ def top_page(emote):
     return payload
 
 
-def top5s_page(number_of_days=30):
+def top5s_page():
     with div(cls="container") as container:
         with div(cls="row justify-content-center"):
             div(b("Emote"), cls="col-1 py-1", align="center")
             for c in ("First", "Second", "Third", "Fourth", "Fifth"):
                 div(b(c), cls="col-2 py-1", align="center")
             div(cls="w-100")
-            for emote, top5 in get_emote_top5s(number_of_days=number_of_days).items():
+            for emote, top5 in get_emote_top5s().items():
                 div(emote_to_html(emote), cls="col-1 py-1", align="center")
                 for user, amount in top5.items():
                     with div(cls="col-2 py-1", align="center") as user_num:
