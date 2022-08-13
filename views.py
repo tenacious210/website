@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request
 from emotes.html import *
+from users.html import *
 
 views = Blueprint(__name__, "views")
 
@@ -7,6 +8,21 @@ views = Blueprint(__name__, "views")
 @views.route("/")
 def index():
     return render_template("base.html", text="Home page", title="home")
+
+
+@views.route("/users")
+def users_home_page():
+    return users_home()
+
+
+@views.route("/users/<name>")
+def users(name):
+    return users_page(name)
+
+
+@views.route("/api/users/<user>")
+def users_api1(user):
+    return users_api(user)
 
 
 @views.route("/emotes")
