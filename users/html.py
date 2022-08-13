@@ -1,5 +1,7 @@
 from dominate.tags import *
 from .db import get_lines, get_top_users
+from emotes.db import get_emotes_user
+from emotes.html import emote_to_html
 from flask import render_template, jsonify
 from re import match
 
@@ -67,6 +69,13 @@ def users_page(user):
             h3(f"Level {user_level['level']}", align="center")
             h4(f"{user_level['xp']}/{user_level['xp_needed']} XP", align="center")
             p(f"Total lines: {lines}", align="center")
+            if user_emotes := get_emotes_user(user, amount=5):
+                with table(align="center"):
+                    with tr():
+                        for emote in user_emotes.keys():
+                            td(emote_to_html(emote), style="padding: 3px")
+                p(a("Favorite emotes", href=f"/emotes?user={user}"), align="center")
+
     else:
         container = p("Couldn't find that user", align="center")
     return render_template(
