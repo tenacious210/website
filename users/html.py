@@ -1,5 +1,5 @@
 from dominate.tags import *
-from .db import get_lines, get_top_users
+from .db import get_lines, get_top_users, get_tng_score
 from emotes.db import get_emotes_user
 from emotes.html import emote_to_html
 from flask import render_template, jsonify
@@ -58,7 +58,7 @@ def users_page(user):
     if lines := get_lines(user):
         user_level = calculate_level(lines)
         with div(cls="container") as container:
-            br()
+            hr()
             with div(cls="progress"):
                 div(
                     cls="progress-bar progress-bar-striped progress-bar-animated",
@@ -66,15 +66,26 @@ def users_page(user):
                     style=f"width: {user_level['progress']}%",
                 )
             p()
+            h3(f"{user_level['xp']}/{user_level['xp_needed']} XP", align="center")
             h3(f"Level {user_level['level']}", align="center")
-            h4(f"{user_level['xp']}/{user_level['xp_needed']} XP", align="center")
             p(f"Total lines: {lines}", align="center")
+            hr()
             if user_emotes := get_emotes_user(user, amount=5):
                 with table(align="center"):
                     with tr():
                         for emote in user_emotes.keys():
                             td(emote_to_html(emote), style="padding: 3px")
                 p(a("Favorite emotes", href=f"/emotes?user={user}"), align="center")
+            hr()
+            if tng_score := get_tng_score(user):
+                with table(align="center"):
+                    with tr():
+                        td(
+                            emote_to_html("BINGQILIN"),
+                            style="padding-right: 5px; padding-bottom: 10px",
+                        )
+                        td(h4(tng_score, align="center"))
+                p("tng69 social credit score", align="center")
 
     else:
         container = p("Couldn't find that user", align="center")

@@ -1,6 +1,18 @@
 import sqlite3
 
 
+def get_top_users():
+    con = sqlite3.connect("dgg_stats.db")
+    cur = con.cursor()
+    top100_raw = cur.execute(
+        "SELECT UserName, Amount FROM Lines ORDER BY Amount DESC LIMIT 101"
+    )
+    top100 = {u: a for u, a in top100_raw}
+    top100.pop("_anon$")
+    con.close()
+    return top100
+
+
 def get_lines(user: str):
     con = sqlite3.connect("dgg_stats.db")
     cur = con.cursor()
@@ -12,13 +24,12 @@ def get_lines(user: str):
     return int(lines[0][0]) if lines else None
 
 
-def get_top_users():
+def get_tng_score(user):
     con = sqlite3.connect("dgg_stats.db")
     cur = con.cursor()
-    top100_raw = cur.execute(
-        "SELECT UserName, Amount FROM Lines ORDER BY Amount DESC LIMIT 101"
-    )
-    top100 = {u: a for u, a in top100_raw}
-    top100.pop("_anon$")
+    params = {"user": user.lower()}
+    tng_score = cur.execute(
+        "SELECT Score FROM TngScore WHERE LOWER(UserName) = :user", params
+    ).fetchall()
     con.close()
-    return top100
+    return int(tng_score[0][0]) if tng_score else None
