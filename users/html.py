@@ -47,11 +47,12 @@ def users_home():
 
 
 def users_api(user):
-    if not match(r"^[\w]+$", user):
+    if (lines := get_lines(user)) and match(r"^[\w]+$", user):
+        user_stats = calculate_level(lines)
+        user_stats["tng_score"] = get_tng_score(user)
+        return jsonify(user_stats)
+    else:
         return jsonify(None)
-    user_stats = calculate_level(get_lines(user))
-    user_stats["tng_score"] = get_tng_score(user)
-    return jsonify(user_stats)
 
 
 def users_page(user):
