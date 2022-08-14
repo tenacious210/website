@@ -86,7 +86,7 @@ def users_page(user):
                             with td(style="padding: 3px"):
                                 emote_to_html(emote)
                                 p(amount, align="center")
-                if emotes_by_10[1]:
+                if len(emotes_by_10) > 1:
                     with div(align="center"):
                         button(
                             "Expand",
