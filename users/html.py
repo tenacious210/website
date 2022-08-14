@@ -71,7 +71,8 @@ def users_page(user):
             h3(f"{user_level['xp']}/{user_level['xp_needed']} XP", align="center")
             h3(f"Level {user_level['level']}", align="center")
             p(f"Total lines: {lines}", align="center")
-            if user_emotes := list(get_emotes_user(user).items()):
+            if user_emotes := get_emotes_user(user):
+                user_emotes = list(user_emotes.items())
                 hr()
                 p(a("Emote counts", href="/emotes"), align="center")
                 emotes_by_10 = [{}]
