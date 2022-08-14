@@ -21,7 +21,7 @@ def get_lines(user: str):
         "SELECT Amount FROM Lines WHERE LOWER(UserName) = :user", params
     ).fetchall()
     con.close()
-    return int(lines[0][0]) if lines else None
+    return int(lines[0][0]) if lines else 0
 
 
 def get_tng_score(user):
@@ -32,4 +32,4 @@ def get_tng_score(user):
         "SELECT Score FROM TngScore WHERE LOWER(UserName) = :user", params
     ).fetchall()
     con.close()
-    return int(tng_score[0][0]) if tng_score else None
+    return int(tng_score[0][0]) if tng_score else 0

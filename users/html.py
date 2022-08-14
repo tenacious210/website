@@ -49,7 +49,9 @@ def users_home():
 def users_api(user):
     if not match(r"^[\w]+$", user):
         return jsonify(None)
-    return jsonify(calculate_level(get_lines(user)))
+    user_stats = calculate_level(get_lines(user))
+    user_stats["tng_score"] = get_tng_score(user)
+    return jsonify(user_stats)
 
 
 def users_page(user):
@@ -69,14 +71,40 @@ def users_page(user):
             h3(f"{user_level['xp']}/{user_level['xp_needed']} XP", align="center")
             h3(f"Level {user_level['level']}", align="center")
             p(f"Total lines: {lines}", align="center")
-            hr()
-            if user_emotes := get_emotes_user(user, amount=5):
+            if user_emotes := list(get_emotes_user(user).items()):
+                hr()
+                p(a("Emote counts", href="/emotes"), align="center")
+                emotes_by_10 = [{}]
+                while len(user_emotes) > 0:
+                    if len(emotes_by_10[-1]) == 10:
+                        emotes_by_10.append({})
+                    emote, amount = user_emotes.pop(0)
+                    emotes_by_10[-1][emote] = amount
                 with table(align="center"):
                     with tr():
-                        for emote in user_emotes.keys():
-                            td(emote_to_html(emote), style="padding: 3px")
-                p(a("Favorite emotes", href=f"/emotes?user={user}"), align="center")
-            hr()
+                        for emote, amount in emotes_by_10[0].items():
+                            with td(style="padding: 3px"):
+                                emote_to_html(emote)
+                                p(amount, align="center")
+                if emotes_by_10[1]:
+                    with div(align="center"):
+                        button(
+                            "Expand",
+                            cls="btn btn-primary",
+                            type="button",
+                            data_toggle="collapse",
+                            data_target="#OtherEmotes",
+                        )
+                    br()
+                    with div(cls="collapse", id="OtherEmotes"):
+                        for emote_dict in emotes_by_10[1:]:
+                            with table(align="center"):
+                                with tr():
+                                    for emote, amount in emote_dict.items():
+                                        with td(style="padding: 3px"):
+                                            emote_to_html(emote)
+                                            p(amount, align="center")
+                    hr()
             if tng_score := get_tng_score(user):
                 with table(align="center"):
                     with tr():

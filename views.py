@@ -27,19 +27,17 @@ def users_api1(user):
 
 @views.route("/emotes")
 def emotes():
-    if user := request.args.get("user"):
-        return user_page(user)
-    elif emote := request.args.get("emote"):
-        return top_page(emote)
+    if emote := request.args.get("emote"):
+        return emote_top_page(emote)
     else:
-        return top5s_page()
+        return emote_top5s_page()
 
 
 @views.route("/api/emotes")
 def api():
     if user := request.args.get("user"):
-        return user_api(user)
+        return emote_user_api(user)
     elif emote := request.args.get("emote"):
-        return top_api(emote)
+        return emote_top_api(emote)
     else:
         return top5s_api()

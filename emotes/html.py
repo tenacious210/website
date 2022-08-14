@@ -11,41 +11,6 @@ except JSONDecodeError:
     emote_json = {}
 
 
-def top5s_api():
-    if amount := request.args.get("amount"):
-        try:
-            amount = int(amount)
-        except ValueError:
-            amount = None
-    return jsonify(get_emote_top5s(amount=amount))
-
-
-def user_api(user):
-    if not match(r"^[\w]+$", user):
-        return jsonify(None)
-    if amount := request.args.get("amount"):
-        try:
-            amount = int(amount)
-        except ValueError:
-            amount = None
-        payload = jsonify(get_emotes_user(user, amount=amount))
-    else:
-        payload = jsonify(get_emotes_user(user))
-    return payload
-
-
-def top_api(emote):
-    if amount := request.args.get("amount"):
-        try:
-            amount = int(amount)
-        except ValueError:
-            amount = 100
-        payload = jsonify(get_emote_top_posters(emote, amount=amount))
-    else:
-        payload = jsonify(get_emote_top_posters(emote))
-    return payload
-
-
 def emote_to_html(emote):
     if emote in (
         "HACKERMAN",
@@ -68,35 +33,42 @@ def emote_to_html(emote):
     return html
 
 
-def user_page(user):
+def top5s_api():
+    if amount := request.args.get("amount"):
+        try:
+            amount = int(amount)
+        except ValueError:
+            amount = None
+    return jsonify(get_emote_top5s(amount=amount))
+
+
+def emote_user_api(user):
     if not match(r"^[\w]+$", user):
-        user = "?"
-    if top_emotes := get_emotes_user(user):
-        with div(cls="container") as container:
-            with div(cls="row justify-content-center"):
-                div(b("Rank"), cls="col-1 py-1", align="center")
-                for c in ("Emote", "30 day total"):
-                    div(b(c), cls="col-2 py-1", align="center")
-                div(cls="w-100")
-                i = 0
-                for emote, amount in top_emotes.items():
-                    i += 1
-                    div(i, cls="col-1 py-1", align="center")
-                    div(emote_to_html(emote), cls="col-2 py-1", align="center")
-                    div(amount, cls="col-2 py-1", align="center")
-                    div(cls="w-100")
+        return jsonify(None)
+    if amount := request.args.get("amount"):
+        try:
+            amount = int(amount)
+        except ValueError:
+            amount = None
+        payload = jsonify(get_emotes_user(user, amount=amount))
     else:
-        container = p("Couldn't find that user", align="center")
-    payload = render_template(
-        "emotes.html",
-        title="user emote",
-        header=f"Emote stats for {user}",
-        content=container,
-    )
+        payload = jsonify(get_emotes_user(user))
     return payload
 
 
-def top_page(emote):
+def emote_top_api(emote):
+    if amount := request.args.get("amount"):
+        try:
+            amount = int(amount)
+        except ValueError:
+            amount = 100
+        payload = jsonify(get_emote_top_posters(emote, amount=amount))
+    else:
+        payload = jsonify(get_emote_top_posters(emote))
+    return payload
+
+
+def emote_top_page(emote):
     if top100 := get_emote_top_posters(emote):
         with div(cls="container") as container:
             with div(cls="row justify-content-center"):
@@ -109,7 +81,7 @@ def top_page(emote):
                     i += 1
                     div(i, cls="col-1 py-1", align="center")
                     div(
-                        a(user, href=f"/emotes?user={user}"),
+                        a(user, href=f"/users/{user}"),
                         cls="col-2 py-1",
                         align="center",
                     )
@@ -126,7 +98,7 @@ def top_page(emote):
     return payload
 
 
-def top5s_page():
+def emote_top5s_page():
     with div(cls="container") as container:
         with div(cls="row justify-content-center"):
             div(b("Emote"), cls="col-1 py-1", align="center")
@@ -137,7 +109,7 @@ def top5s_page():
                 div(emote_to_html(emote), cls="col-1 py-1", align="center")
                 for user, amount in top5.items():
                     with div(cls="col-2 py-1", align="center") as user_num:
-                        a(user, href=f"/emotes?user={user}")
+                        a(user, href=f"/users/{user}")
                     user_num.add(f": {amount}")
                 div(cls="w-100")
     payload = render_template(
