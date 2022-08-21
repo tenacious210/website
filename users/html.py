@@ -1,5 +1,5 @@
 from dominate.tags import *
-from .db import get_lines, get_top_users, get_tng_score
+from .db import get_lines, get_top_users, get_tng_score, get_friends
 from emotes.db import get_emotes_user
 from emotes.html import emote_to_html
 from flask import render_template, jsonify
@@ -50,6 +50,7 @@ def users_api(user):
     if (lines := get_lines(user)) and match(r"^[\w]+$", user):
         user_stats = calculate_level(lines)
         user_stats["tng_score"] = get_tng_score(user)
+        user_stats["best_friends"] = get_friends(user, amount=3)
         return jsonify(user_stats)
     else:
         return jsonify(None)
@@ -72,23 +73,76 @@ def users_page(user):
             h3(f"{user_level['xp']}/{user_level['xp_needed']} XP", align="center")
             h3(f"Level {user_level['level']}", align="center")
             p(f"Total lines: {lines}", align="center")
+            if friends := get_friends(user, amount=25):
+                hr()
+                p(b("Best friends"), align="center")
+                friend_index = tuple(friends.keys())
+                top30 = None
+                if len(friend_index) > 3:
+                    top3 = {k: friends[k] for k in friend_index[:3]}
+                    top30 = {k: friends[k] for k in friend_index[3:]}
+                else:
+                    top3 = {k: friends[k] for k in friend_index}
+                with div(align="center"):
+                    with table(style="table-layout: fixed; width: 300px"):
+                        col(style="width: 10%", span="1")
+                        col(style="width: 80%", span="1")
+                        col(style="width: 10%", span="1")
+                        with tr():
+                            for c in ("Rank", "Name", "Mentions"):
+                                td(b(c), align="center")
+                        i = 0
+                        for username, amount in top3.items():
+                            with tr():
+                                i += 1
+                                td(i, align="center")
+                                td(
+                                    a(username, href=f"/users/{username}"),
+                                    align="center",
+                                )
+                                td(amount, align="center")
+                if top30:
+                    p()
+                    with div(align="center"):
+                        button(
+                            "Expand",
+                            cls="btn btn-primary",
+                            type="button",
+                            data_toggle="collapse",
+                            data_target="#OtherFriends",
+                        )
+                    p()
+                    with div(cls="collapse", id="OtherFriends", align="center"):
+                        with table(style="table-layout: fixed; width: 300px"):
+                            col(style="width: 10%", span="1")
+                            col(style="width: 80%", span="1")
+                            col(style="width: 10%", span="1")
+                            for username, amount in top30.items():
+                                with tr():
+                                    i += 1
+                                    td(i, align="center")
+                                    td(
+                                        a(username, href=f"/users/{username}"),
+                                        align="center",
+                                    )
+                                    td(amount, align="center")
             if user_emotes := get_emotes_user(user):
                 user_emotes = list(user_emotes.items())
                 hr()
-                p(a("Emote counts", href="/emotes"), align="center")
-                emotes_by_10 = [{}]
+                p(b(a("Emote counts", href="/emotes")), align="center")
+                emotes_by_7 = [{}]
                 while len(user_emotes) > 0:
-                    if len(emotes_by_10[-1]) == 10:
-                        emotes_by_10.append({})
+                    if len(emotes_by_7[-1]) == 7:
+                        emotes_by_7.append({})
                     emote, amount = user_emotes.pop(0)
-                    emotes_by_10[-1][emote] = amount
+                    emotes_by_7[-1][emote] = amount
                 with table(align="center"):
                     with tr():
-                        for emote, amount in emotes_by_10[0].items():
+                        for emote, amount in emotes_by_7[0].items():
                             with td(style="padding: 3px"):
                                 emote_to_html(emote)
                                 p(amount, align="center")
-                if len(emotes_by_10) > 1:
+                if len(emotes_by_7) > 1:
                     with div(align="center"):
                         button(
                             "Expand",
@@ -99,15 +153,15 @@ def users_page(user):
                         )
                     br()
                     with div(cls="collapse", id="OtherEmotes"):
-                        for emote_dict in emotes_by_10[1:]:
+                        for emote_dict in emotes_by_7[1:]:
                             with table(align="center"):
                                 with tr():
                                     for emote, amount in emote_dict.items():
                                         with td(style="padding: 3px"):
                                             emote_to_html(emote)
                                             p(amount, align="center")
-                    hr()
             if tng_score := get_tng_score(user):
+                hr()
                 with table(align="center"):
                     with tr():
                         td(
