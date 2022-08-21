@@ -46,7 +46,8 @@ def get_friends(user: str, amount):
         mentions_unsorted = json.loads(mentions_raw[0][0])
         for k, v in sorted(mentions_unsorted.items(), key=lambda i: i[1], reverse=True):
             if len(mentions) < amount:
-                mentions[k] = v
+                if k not in ("Ban", "Subscriber", "_anon$"):
+                    mentions[k] = v
             else:
                 break
     con.close()
