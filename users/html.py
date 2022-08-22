@@ -24,19 +24,21 @@ def calculate_level(xp):
 
 def users_home():
     top100 = get_top_users()
-    with div(cls="container") as container:
-        with div(cls="row justify-content-center"):
-            div(b("Rank"), cls="col-1 py-1", align="center")
-            for c in ("User", "Level"):
-                div(b(c), cls="col-2 py-1", align="center")
-            div(cls="w-100")
+    with div(cls="container", align="center") as container:
+        with table(style="table-layout: fixed; width: 250px"):
+            col(style="width: 10%", span="1")
+            col(style="width: 80%", span="1")
+            col(style="width: 10%", span="1")
+            with tr():
+                for c in ("Rank", "User", "Level"):
+                    td(b(c), align="center")
             i = 0
-            for user, amount in top100.items():
+            for username, lines in top100.items():
                 i += 1
-                div(i, cls="col-1 py-1", align="center")
-                div(a(user, href=f"/users/{user}"), cls="col-2 py-1", align="center")
-                div(calculate_level(amount)["level"], cls="col-2 py-1", align="center")
-                div(cls="w-100")
+                with tr():
+                    td(b(i), align="center")
+                    td(a(username, href=f"/users/{username}"), align="center")
+                    td(calculate_level(lines)["level"], align="center")
     payload = render_template(
         "users.html",
         title="users",
@@ -66,8 +68,8 @@ def users_page(user):
             with div(cls="progress"):
                 div(
                     cls="progress-bar progress-bar-striped progress-bar-animated",
-                    role="progressbar",
                     style=f"width: {user_level['progress']}%",
+                    align="center",
                 )
             p()
             h3(f"{user_level['xp']}/{user_level['xp_needed']} XP", align="center")
@@ -75,7 +77,8 @@ def users_page(user):
             p(f"Total lines: {lines}", align="center")
             if friends := get_friends(user, amount=25):
                 hr()
-                p(b("Best friends"), align="center")
+                h3("Best friends", align="center")
+                p()
                 friend_index = tuple(friends.keys())
                 top30 = None
                 if len(friend_index) > 3:
@@ -84,10 +87,10 @@ def users_page(user):
                 else:
                     top3 = {k: friends[k] for k in friend_index}
                 with div(align="center"):
-                    with table(style="table-layout: fixed; width: 300px"):
-                        col(style="width: 10%", span="1")
-                        col(style="width: 80%", span="1")
-                        col(style="width: 10%", span="1")
+                    with table(cls="three-column"):
+                        col(style="width: 20%", span="1")
+                        col(style="width: 60%", span="1")
+                        col(style="width: 20%", span="1")
                         with tr():
                             for c in ("Rank", "Name", "Mentions"):
                                 td(b(c), align="center")
@@ -113,10 +116,10 @@ def users_page(user):
                         )
                     p()
                     with div(cls="collapse", id="OtherFriends", align="center"):
-                        with table(style="table-layout: fixed; width: 300px"):
-                            col(style="width: 10%", span="1")
-                            col(style="width: 80%", span="1")
-                            col(style="width: 10%", span="1")
+                        with table(cls="three-column"):
+                            col(style="width: 20%", span="1")
+                            col(style="width: 60%", span="1")
+                            col(style="width: 20%", span="1")
                             for username, amount in top30.items():
                                 with tr():
                                     i += 1

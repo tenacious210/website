@@ -71,22 +71,23 @@ def emote_top_api(emote):
 def emote_top_page(emote):
     if top100 := get_emote_top_posters(emote):
         with div(cls="container") as container:
-            with div(cls="row justify-content-center"):
-                div(b("Rank"), cls="col-1 py-1", align="center")
-                for c in ("Username", "30 day total"):
-                    div(b(c), cls="col-2 py-1", align="center")
-                div(cls="w-100")
+            with table(cls="three-column", align="center"):
+                col(style="width: 20%", span="1")
+                col(style="width: 60%", span="1")
+                col(style="width: 20%", span="1")
+                with tr():
+                    for c in ("Rank", "Name", "Amount"):
+                        td(b(c), align="center")
                 i = 0
-                for user, amount in top100.items():
+                for username, amount in top100.items():
                     i += 1
-                    div(i, cls="col-1 py-1", align="center")
-                    div(
-                        a(user, href=f"/users/{user}"),
-                        cls="col-2 py-1",
-                        align="center",
-                    )
-                    div(amount, cls="col-2 py-1", align="center")
-                    div(cls="w-100")
+                    with tr():
+                        td(i, align="center")
+                        td(
+                            a(username, href=f"/users/{username}"),
+                            align="center",
+                        )
+                        td(amount, align="center")
     else:
         container = p("Couldn't find that emote", align="center")
     payload = render_template(
@@ -100,18 +101,23 @@ def emote_top_page(emote):
 
 def emote_top5s_page():
     with div(cls="container") as container:
-        with div(cls="row justify-content-center"):
-            div(b("Emote"), cls="col-1 py-1", align="center")
-            for c in ("First", "Second", "Third", "Fourth", "Fifth"):
-                div(b(c), cls="col-2 py-1", align="center")
-            div(cls="w-100")
+        with table(style="width: 100%", align="center"):
+            col(style="width: 5%", span="1")
+            col(style="width: 19%", span="5")
+            with tr():
+                for c in ("Emote", "First", "Second", "Third", "Fourth", "Fifth"):
+                    td(b(c), align="center", style="padding-bottom: 5px")
             for emote, top5 in get_emote_top5s().items():
-                div(emote_to_html(emote), cls="col-1 py-1", align="center")
-                for user, amount in top5.items():
-                    with div(cls="col-2 py-1", align="center") as user_num:
-                        a(user, href=f"/users/{user}")
-                    user_num.add(f": {amount}")
-                div(cls="w-100")
+                with tr():
+                    td(
+                        emote_to_html(emote),
+                        align="center",
+                        style="padding-bottom: 5px",
+                    )
+                    for username, amount in top5.items():
+                        with td(align="center", style="padding-bottom: 5px") as poster:
+                            a(username, href=f"/users/{username}")
+                        poster.add(f": {amount}")
     payload = render_template(
         "emotes.html",
         title="emotes",
