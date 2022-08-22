@@ -132,7 +132,8 @@ def users_page(user):
             if user_emotes := get_emotes_user(user):
                 user_emotes = list(user_emotes.items())
                 hr()
-                p(b(a("Emote counts", href="/emotes")), align="center")
+                h3(a("Emote counts", href="/emotes"), align="center")
+                p()
                 emotes_by_7 = [{}]
                 while len(user_emotes) > 0:
                     if len(emotes_by_7[-1]) == 7:
