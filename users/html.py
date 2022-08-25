@@ -52,7 +52,8 @@ def users_api(user):
     if (lines := get_lines(user)) and match(r"^[\w]+$", user):
         user_stats = calculate_level(lines)
         user_stats["tng_score"] = get_tng_score(user)
-        user_stats["best_friends"] = get_friends(user, amount=3)
+        user_stats["best_friends"] = get_friends(user, amount=50)
+        user_stats["bans"] = {str(k): v for k, v in get_bans(user).items()}
         return jsonify(user_stats)
     else:
         return jsonify(None)
