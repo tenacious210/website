@@ -28,6 +28,15 @@ table.three-column {
     width: 300px
 }
 
+table.four-column {
+    table-layout: fixed;
+    width: 400px;
+}
+
+.hiddenRow {
+    padding: 0 !important;
+}
+
 .navbar {
     box-shadow: 0px 2px 3px 2px rgba(0, 0, 0, 0.03);
     border-bottom: 1px solid var(--light-color);

@@ -1,5 +1,7 @@
+from datetime import datetime
 import sqlite3
 import json
+import re
 
 
 def get_top_users():
@@ -18,9 +20,8 @@ def get_lines(user: str):
     con = sqlite3.connect("dgg_stats.db")
     cur = con.cursor()
     params = {"user": user.lower()}
-    lines = cur.execute(
-        "SELECT Amount FROM Lines WHERE LOWER(UserName) = :user", params
-    ).fetchall()
+    cmd = "SELECT Amount FROM Lines WHERE LOWER(UserName) = :user"
+    lines = cur.execute(cmd, params).fetchall()
     con.close()
     return int(lines[0][0]) if lines else 0
 
@@ -35,7 +36,7 @@ def get_tng_score(user: str):
     return int(tng_score[0][0]) if tng_score else 0
 
 
-def get_friends(user: str, amount):
+def get_friends(user: str, amount=None):
     con = sqlite3.connect("dgg_stats.db")
     cur = con.cursor()
     params = {"user": user.lower()}
@@ -44,6 +45,8 @@ def get_friends(user: str, amount):
     mentions = {}
     if mentions_raw:
         mentions_unsorted = json.loads(mentions_raw[0][0])
+        if not amount:
+            amount = len(mentions_unsorted)
         for k, v in sorted(mentions_unsorted.items(), key=lambda i: i[1], reverse=True):
             if len(mentions) < amount:
                 if k not in ("Ban", "Subscriber", "_anon$"):
@@ -52,3 +55,35 @@ def get_friends(user: str, amount):
                 break
     con.close()
     return mentions
+
+
+def get_bans(user: str, amount=None):
+    con = sqlite3.connect("dgg_stats.db")
+    cur = con.cursor()
+    params = {"user": user.lower()}
+    cmd = "SELECT Bans FROM UserBans WHERE LOWER(UserName) = :user"
+    bans_raw = cur.execute(cmd, params).fetchall()
+    bans = {}
+    if bans_raw:
+        bans_raw = json.loads(bans_raw[0][0])
+        bans_by_date_unsorted = {}
+        for ban in bans_raw:
+            date_strings = re.split(r"-| |:", ban.pop("timestamp"))
+            date_strings.remove("UTC")
+            if len(date_strings) > 6:
+                continue
+            date_strings = [int(i) for i in date_strings]
+            bans_by_date_unsorted[datetime(*date_strings)] = ban
+        if not amount:
+            amount = len(bans_by_date_unsorted)
+        for d in sorted(bans_by_date_unsorted.keys(), reverse=True):
+            if len(bans) < amount:
+                bans[d] = bans_by_date_unsorted[d]
+            else:
+                break
+    con.close()
+    return bans
+
+
+if __name__ == "__main__":
+    print(get_bans("Destiny", amount=3))

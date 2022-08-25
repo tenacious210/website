@@ -1,5 +1,5 @@
 from dominate.tags import *
-from .db import get_lines, get_top_users, get_tng_score, get_friends
+from .db import *
 from emotes.db import get_emotes_user
 from emotes.html import emote_to_html
 from flask import render_template, jsonify
@@ -174,6 +174,100 @@ def users_page(user):
                         )
                         td(h4(tng_score, align="center"))
                 p("tng69 social credit score", align="center")
+            if bans := get_bans(user):
+                hr()
+                h3(f"Bans on record: {len(bans)}", align="center")
+                p()
+                ban_index = tuple(bans.keys())
+                rest = None
+                if len(ban_index) > 3:
+                    most_recent = {k: bans[k] for k in ban_index[:3]}
+                    rest = {k: bans[k] for k in ban_index[3:]}
+                else:
+                    most_recent = {k: bans[k] for k in ban_index}
+
+                def expanding_ban_row(timestamp, ban_info, id):
+                    if not (reason := ban_info.pop("reason")):
+                        reason = ""
+                    ctx_duration = ban_info["duration"]
+                    if not ban_info["duration"]:
+                        ctx_duration = ""
+                        if ban_info["type"] in ("mute", "ban"):
+                            ban_info["duration"] = "10m"
+                        else:
+                            ban_info["duration"] = "perma"
+                    ctx_mod = ban_info["mod"]
+                    if ban_info["mod"] == "RightToBearArmsLOL":
+                        ban_info["mod"] = "RTBA"
+                    date = timestamp.strftime("%Y-%m-%d")
+                    time = timestamp.strftime("%H:%M:%S")
+                    with tr() as row1:
+                        td(
+                            button(
+                                "+",
+                                cls="btn btn-default btn-sm btn-dark accordion-toggle",
+                                data_toggle="collapse",
+                                data_target=f"#ctx{i}",
+                            ),
+                            align="center",
+                        )
+                        td(f"{date}", align="center")
+                        for info in ban_info.values():
+                            td(str(info), align="center")
+                    with tr() as row2:
+                        with td(colspan="5", cls="hiddenRow"):
+                            with div(
+                                cls="accordian-body collapse",
+                                id=f"ctx{i}",
+                            ):
+                                p()
+                                ban_message = (
+                                    f"[{time} UTC] {ctx_mod}: !{ban_info['type']} "
+                                    f"{ctx_duration} {user} {reason}"
+                                )
+                                p(
+                                    ban_message,
+                                    align="left",
+                                    style="padding-left: 20px",
+                                )
+                    return (row1, row2)
+
+                with div(align="center"):
+                    with table(cls="four-column"):
+                        col(style="width: 10%", span="1")
+                        col(style="width: 20%", span="2")
+                        col(style="width: 10%", span="2")
+                        with tr():
+                            for c in ("Context", "Date", "Mod", "Type", "Duration"):
+                                td(b(c), align="center")
+                        i = 0
+                        for timestamp, ban_info in most_recent.items():
+                            i += 1
+                            new_row = expanding_ban_row(timestamp, ban_info, i)
+                            new_row[0]
+                            new_row[1]
+                    if rest:
+                        p()
+                        with div(align="center"):
+                            button(
+                                "Expand",
+                                cls="btn btn-primary",
+                                type="button",
+                                data_toggle="collapse",
+                                data_target="#OtherBans",
+                            )
+                        p()
+                        with div(cls="collapse", id="OtherBans", align="center"):
+                            with table(cls="four-column"):
+                                col(style="width: 10%", span="1")
+                                col(style="width: 20%", span="2")
+                                col(style="width: 10%", span="2")
+                                for timestamp, ban_info in rest.items():
+                                    i += 1
+                                    new_row = expanding_ban_row(timestamp, ban_info, i)
+                                    new_row[0]
+                                    new_row[1]
+            br()
 
     else:
         container = p("Couldn't find that user", align="center")
