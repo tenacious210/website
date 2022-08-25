@@ -91,7 +91,7 @@ def emote_top_page(emote):
     else:
         container = p("Couldn't find that emote", align="center")
     payload = render_template(
-        "emotes.html",
+        "with_user_search.html",
         title="emote",
         header=f"Top 100 {emote_to_html(emote)} posters of the month",
         content=container,
@@ -119,7 +119,7 @@ def emote_top5s_page():
                             a(username, href=f"/users/{username}")
                         poster.add(f": {amount}")
     payload = render_template(
-        "emotes.html",
+        "with_user_search.html",
         title="emotes",
         header="Top emote posters of the month",
         content=container,

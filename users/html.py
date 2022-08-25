@@ -40,7 +40,7 @@ def users_home():
                     td(a(username, href=f"/users/{username}"), align="center")
                     td(calculate_level(lines)["level"], align="center")
     payload = render_template(
-        "users.html",
+        "with_user_search.html",
         title="users",
         header=f"Top 100 users in DGG",
         content=container,
@@ -273,7 +273,7 @@ def users_page(user):
     else:
         container = p("Couldn't find that user", align="center")
     return render_template(
-        "users.html",
+        "with_user_search.html",
         title="user",
         header=f"User stats for {user}",
         content=container,
