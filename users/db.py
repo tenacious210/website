@@ -11,7 +11,8 @@ def get_top_users():
         "SELECT UserName, Amount FROM Lines ORDER BY Amount DESC LIMIT 101"
     )
     top100 = {u: a for u, a in top100_raw}
-    top100.pop("_anon$")
+    if "_anon$" in top100.keys():
+        top100.pop("_anon$")
     con.close()
     return top100
 
