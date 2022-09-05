@@ -16,5 +16,9 @@
    - 'gcr.io/$PROJECT_ID/website:$COMMIT_SHA'
    - '--region'
    - 'us-central1'
+   - '--min-instances'
+   - '0'
+   - '--max-instances'
+   - '1'
  images:
  - 'gcr.io/$PROJECT_ID/website:$COMMIT_SHA'
