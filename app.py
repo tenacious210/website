@@ -1,5 +1,6 @@
 from google.cloud import storage
 from schedule import every, repeat, run_pending
+from datetime import datetime
 from threading import Thread
 from time import sleep
 from flask import Flask
@@ -13,6 +14,7 @@ def download_latest_db():
     storage_bucket = storage_client.bucket("tenadev")
     blob = storage_bucket.blob("dgg_stats.db")
     blob.download_to_filename("dgg_stats.db")
+    print(f"Downloaded latest database at {datetime.now()}")
 
 
 def run_scheduled():
