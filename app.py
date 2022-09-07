@@ -18,8 +18,9 @@ def download_latest_db():
 
 
 def run_scheduled():
-    run_pending()
-    sleep(60)
+    while True:
+        run_pending()
+        sleep(60)
 
 
 app = Flask(__name__)
