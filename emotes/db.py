@@ -3,6 +3,9 @@ import requests
 from datetime import datetime, timedelta
 from requests import JSONDecodeError
 import json
+from os import getenv
+
+db_name = getenv("DGG_STATS_DB")
 
 try:
     emote_json = requests.get("https://cdn.destiny.gg/emotes/emotes.json").json()
@@ -21,7 +24,7 @@ def daterange(start_date, end_date):
 
 
 def get_emotes_user(username, number_of_days=30, amount=None):
-    con = sqlite3.connect("dgg_stats.db", detect_types=sqlite3.PARSE_DECLTYPES)
+    con = sqlite3.connect(db_name, detect_types=sqlite3.PARSE_DECLTYPES)
     cur = con.cursor()
     cmd = "SELECT UserName FROM EmoteStats WHERE LOWER(UserName)=:user"
     params = {"user": username.lower()}
@@ -57,7 +60,7 @@ def get_emotes_user(username, number_of_days=30, amount=None):
 
 
 def get_emote_top_posters(emote, number_of_days=30, amount=100):
-    con = sqlite3.connect("dgg_stats.db", detect_types=sqlite3.PARSE_DECLTYPES)
+    con = sqlite3.connect(db_name, detect_types=sqlite3.PARSE_DECLTYPES)
     cur = con.cursor()
     if emote not in emotes:
         con.close()
@@ -76,7 +79,7 @@ def get_emote_top_posters(emote, number_of_days=30, amount=100):
 
 
 def get_emote_top5s(amount=None):
-    con = sqlite3.connect("dgg_stats.db", detect_types=sqlite3.PARSE_DECLTYPES)
+    con = sqlite3.connect(db_name, detect_types=sqlite3.PARSE_DECLTYPES)
     cur = con.cursor()
     top5s_unsorted = {
         e: json.loads(t5)
