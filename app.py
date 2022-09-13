@@ -10,10 +10,11 @@ import os
 
 @repeat(every().day.at("00:10"))
 def download_latest_db():
+    db_name = os.getenv("DGG_STATS_DB")
     storage_client = storage.Client()
     storage_bucket = storage_client.bucket("tenadev")
-    blob = storage_bucket.blob("dgg_stats.db")
-    blob.download_to_filename("dgg_stats.db")
+    blob = storage_bucket.blob(db_name)
+    blob.download_to_filename(db_name)
     print(f"Downloaded latest database at {datetime.now()}")
 
 
