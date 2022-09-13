@@ -21,6 +21,6 @@
    - '--max-instances'
    - '1'
    - '--set-env-vars'
-   - '[DGG_STATS_DB=dgg_stats_staging.db]'
+   - 'DGG_STATS_DB=dgg_stats_staging.db'
  images:
  - 'gcr.io/$PROJECT_ID/website-staging:$COMMIT_SHA'
