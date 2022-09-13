@@ -2,10 +2,13 @@ from datetime import datetime
 import sqlite3
 import json
 import re
+from os import getenv
+
+db_name = getenv("DGG_STATS_DB")
 
 
 def get_top_users():
-    con = sqlite3.connect("dgg_stats.db")
+    con = sqlite3.connect(db_name)
     cur = con.cursor()
     top100_raw = cur.execute(
         "SELECT UserName, Amount FROM Lines ORDER BY Amount DESC LIMIT 101"
@@ -18,7 +21,7 @@ def get_top_users():
 
 
 def get_lines(user: str):
-    con = sqlite3.connect("dgg_stats.db")
+    con = sqlite3.connect(db_name)
     cur = con.cursor()
     params = {"user": user.lower()}
     cmd = "SELECT Amount FROM Lines WHERE LOWER(UserName) = :user"
@@ -28,7 +31,7 @@ def get_lines(user: str):
 
 
 def get_tng_score(user: str):
-    con = sqlite3.connect("dgg_stats.db")
+    con = sqlite3.connect(db_name)
     cur = con.cursor()
     params = {"user": user.lower()}
     cmd = "SELECT Score FROM TngScore WHERE LOWER(UserName) = :user"
@@ -38,7 +41,7 @@ def get_tng_score(user: str):
 
 
 def get_friends(user: str, amount=None):
-    con = sqlite3.connect("dgg_stats.db")
+    con = sqlite3.connect(db_name)
     cur = con.cursor()
     params = {"user": user.lower()}
     cmd = "SELECT Mentions FROM UserMentions WHERE LOWER(UserName) = :user"
@@ -59,7 +62,7 @@ def get_friends(user: str, amount=None):
 
 
 def get_bans(user: str, amount=None):
-    con = sqlite3.connect("dgg_stats.db")
+    con = sqlite3.connect(db_name)
     cur = con.cursor()
     params = {"user": user.lower()}
     cmd = "SELECT Bans FROM UserBans WHERE LOWER(UserName) = :user"
