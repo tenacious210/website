@@ -1,14 +1,10 @@
 from google.cloud import storage
-from schedule import every, repeat, run_pending
 from datetime import datetime
-from threading import Thread
-from time import sleep
 from flask import Flask
 from views import views
 import os
 
 
-@repeat(every().day.at("00:10"))
 def download_latest_db():
     db_name = os.getenv("DGG_STATS_DB")
     storage_client = storage.Client()
@@ -18,20 +14,9 @@ def download_latest_db():
     print(f"Downloaded latest database at {datetime.now()}")
 
 
-def run_scheduled():
-    while True:
-        run_pending()
-        sleep(60)
-
-
-app = Flask(__name__)
-app.register_blueprint(views, url_prefix="/")
-app.config["JSON_SORT_KEYS"] = False
-
-
 if __name__ == "__main__":
+    app = Flask(__name__)
+    app.register_blueprint(views, url_prefix="/")
+    app.config["JSON_SORT_KEYS"] = False
     download_latest_db()
-    download_db_thread = Thread(target=run_scheduled)
-    download_db_thread.start()
-    server_port = os.environ.get("PORT", "8080")
-    app.run(debug=False, port=server_port, host="0.0.0.0")
+    app.run(debug=False, port=os.environ.get("PORT", "8080"), host="0.0.0.0")
