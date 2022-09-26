@@ -27,13 +27,13 @@ def emote_to_html(emote):
         for e in emote_json:
             if e["prefix"] == emote:
                 img_link = e["image"][0]["url"]
-        html = a(img(src=img_link), href=f"/emotes?emote={emote}")
+        html = a(img(src=img_link), href=f"/emotes/{emote}")
     else:
-        html = a(div(title=emote, cls=f"emote {emote}"), href=f"/emotes?emote={emote}")
+        html = a(div(title=emote, cls=f"emote {emote}"), href=f"/emotes/{emote}")
     return html
 
 
-def top5s_api():
+def emote_top5s_api():
     if amount := request.args.get("amount"):
         try:
             amount = int(amount)
@@ -42,21 +42,7 @@ def top5s_api():
     return jsonify(get_emote_top5s(amount=amount))
 
 
-def emote_user_api(user):
-    if not match(r"^[\w]+$", user):
-        return jsonify(None)
-    if amount := request.args.get("amount"):
-        try:
-            amount = int(amount)
-        except ValueError:
-            amount = None
-        payload = jsonify(get_emotes_user(user, amount=amount))
-    else:
-        payload = jsonify(get_emotes_user(user))
-    return payload
-
-
-def emote_top_api(emote):
+def emote_top100_api(emote):
     if amount := request.args.get("amount"):
         try:
             amount = int(amount)

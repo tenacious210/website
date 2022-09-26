@@ -12,36 +12,38 @@ def index():
 
 
 @views.route("/users")
-def users_home_page():
+def users_home_response():
     return users_home()
 
 
 @views.route("/users/<name>")
-def users(name):
+def users_response(name):
     return users_page(name)
 
 
 @views.route("/api/users/<user>")
-def users_api1(user):
+def users_api_response(user):
     return users_api(user)
 
 
 @views.route("/emotes")
-def emotes():
-    if emote := request.args.get("emote"):
-        return emote_top_page(emote)
-    else:
-        return emote_top5s_page()
+def emotes_home_response():
+    return emote_top5s_page()
+
+
+@views.route("/emotes/<emote>")
+def emotes_response(emote):
+    return emote_top_page(emote)
 
 
 @views.route("/api/emotes")
-def api():
-    if user := request.args.get("user"):
-        return emote_user_api(user)
-    elif emote := request.args.get("emote"):
-        return emote_top_api(emote)
-    else:
-        return top5s_api()
+def emotes_api_response():
+    return emote_top5s_api()
+
+
+@views.route("/api/emotes/<emote>")
+def emotes_top_api_response(emote):
+    return emote_top100_api(emote)
 
 
 @views.route("/donate")
