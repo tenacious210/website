@@ -17,18 +17,18 @@ def emote_to_html(emote):
         "YEEHAW",
         "PARDNER",
         "BibleThump",
-        "ATAB",
         "PepeHands",
         "Slumlord",
         "LOVE",
         "Blubstiny",
         "GRUGingOverIt",
-        "ATAB",
     ):
         for e in emote_json:
             if e["prefix"] == emote:
                 img_link = e["image"][0]["url"]
         html = a(img(src=img_link), href=f"/emotes/{emote}")
+    elif emote == "ATAB":
+        html = a("ATAB", href=f"/emotes/{emote}")
     else:
         html = a(div(title=emote, cls=f"emote {emote}"), href=f"/emotes/{emote}")
     return html
