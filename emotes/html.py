@@ -91,13 +91,24 @@ def emote_top_page(emote):
 def emote_top5s_page():
     with div(cls="container") as container:
         with table(style="width: 100%", align="center"):
-            col(style="width: 5%", span="1")
+            col(style="width: 5%", span="2")
             col(style="width: 19%", span="5")
             with tr():
-                for c in ("Emote", "First", "Second", "Third", "Fourth", "Fifth"):
+                for c in (
+                    "Rank",
+                    "Emote",
+                    "First",
+                    "Second",
+                    "Third",
+                    "Fourth",
+                    "Fifth",
+                ):
                     td(b(c), align="center", style="padding-bottom: 5px")
+            rank = 0
             for emote, top5 in get_emote_top5s().items():
+                rank += 1
                 with tr():
+                    td(b(rank), align="center")
                     td(
                         emote_to_html(emote),
                         align="center",
