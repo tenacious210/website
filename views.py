@@ -86,3 +86,21 @@ def voiture():
         header=emote_to_html("LULW"),
         content=container,
     )
+
+
+@views.route("/cantclosevim")
+def cantclosevim():
+    with div(align="center") as container:
+        p()
+        iframe(
+            width="384",
+            height="683",
+            src="https://www.youtube.com/embed/TDestzutf1s",
+            frameborder="0",
+        )
+    return render_template(
+        "with_user_search.html",
+        title="cantclosevim",
+        header=emote_to_html("LULW"),
+        content=container,
+    )
