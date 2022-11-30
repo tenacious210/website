@@ -82,7 +82,7 @@ def voiture():
         )
     return render_template(
         "with_user_search.html",
-        title="donate",
+        title="voiture",
         header=emote_to_html("LULW"),
         content=container,
     )
