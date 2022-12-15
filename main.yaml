@@ -19,7 +19,7 @@
    - '--min-instances'
    - '0'
    - '--max-instances'
-   - '1'
+   - '3'
    - '--set-env-vars'
    - 'DGG_STATS_DB=dgg_stats.db'
  images:

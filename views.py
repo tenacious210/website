@@ -68,3 +68,39 @@ def donate():
         header=f"Support me",
         content=container,
     )
+
+
+@views.route("/voiture")
+def voiture():
+    with div(align="center") as container:
+        p()
+        iframe(
+            width="560",
+            height="315",
+            src="https://www.youtube.com/embed/tZ_gn0E87Qo",
+            frameborder="0",
+        )
+    return render_template(
+        "with_user_search.html",
+        title="voiture",
+        header=emote_to_html("LULW"),
+        content=container,
+    )
+
+
+@views.route("/cantclosevim")
+def cantclosevim():
+    with div(align="center") as container:
+        p()
+        iframe(
+            width="384",
+            height="683",
+            src="https://www.youtube.com/embed/TDestzutf1s",
+            frameborder="0",
+        )
+    return render_template(
+        "with_user_search.html",
+        title="cantclosevim",
+        header=emote_to_html("LULW"),
+        content=container,
+    )
