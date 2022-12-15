@@ -7,6 +7,22 @@ from os import getenv
 db_name = getenv("DGG_STATS_DB")
 
 
+def calculate_level(xp):
+    level = 1
+    xp_needed = 1000
+    while xp > xp_needed:
+        level += 1
+        xp -= xp_needed
+        xp_needed *= 1.1
+
+    return {
+        "level": level,
+        "xp": round(xp),
+        "xp_needed": round(xp_needed),
+        "progress": xp / xp_needed * 100,
+    }
+
+
 def get_top_users():
     con = sqlite3.connect(db_name)
     cur = con.cursor()
@@ -28,6 +44,25 @@ def get_lines(user: str):
     lines = cur.execute(cmd, params).fetchall()
     con.close()
     return int(lines[0][0]) if lines else 0
+
+
+def get_all_levels():
+    con = sqlite3.connect(db_name)
+    cur = con.cursor()
+    user_lines = cur.execute(
+        "SELECT UserName, Amount FROM Lines WHERE Amount > 1000 ORDER BY Amount DESC"
+    )
+    levels = {}
+    for user, lines in user_lines:
+        level = 1
+        xp_needed = 1000
+        while lines > xp_needed:
+            level += 1
+            lines -= xp_needed
+            xp_needed *= 1.1
+        levels[user] = level
+    con.close()
+    return levels
 
 
 def get_tng_score(user: str):
