@@ -21,9 +21,14 @@ def users_response(name):
     return users_page(name)
 
 
+@views.route("/api/users")
+def users_levels_api_response():
+    return all_users_api()
+
+
 @views.route("/api/users/<user>")
 def users_api_response(user):
-    return users_api(user)
+    return one_user_api(user)
 
 
 @views.route("/emotes")

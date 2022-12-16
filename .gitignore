@@ -156,3 +156,5 @@ cython_debug/
 *.db
 lastupdate.txt
 *.DS_Store
+.vscode/
+levels.json

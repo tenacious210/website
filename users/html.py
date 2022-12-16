@@ -4,22 +4,7 @@ from emotes.db import get_emotes_user
 from emotes.html import emote_to_html
 from flask import render_template, jsonify
 from re import match
-
-
-def calculate_level(xp):
-    level = 1
-    xp_needed = 1000
-    while xp > xp_needed:
-        level += 1
-        xp -= xp_needed
-        xp_needed *= 1.1
-
-    return {
-        "level": level,
-        "xp": round(xp),
-        "xp_needed": round(xp_needed),
-        "progress": xp / xp_needed * 100,
-    }
+import os
 
 
 def users_home():
@@ -48,7 +33,18 @@ def users_home():
     return payload
 
 
-def users_api(user):
+def all_users_api():
+    if os.path.exists("levels.json"):
+        with open("levels.json", "r") as levels_json:
+            levels = json.loads(levels_json.read())
+    else:
+        levels = get_all_levels()
+        with open("levels.json", "w") as levels_json:
+            levels_json.write(json.dumps(levels))
+    return jsonify(levels)
+
+
+def one_user_api(user):
     if (lines := get_lines(user)) and match(r"^[\w]+$", user):
         user_stats = calculate_level(lines)
         user_stats["best_friends"] = get_friends(user, amount=50)
