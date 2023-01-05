@@ -14,8 +14,8 @@ except JSONDecodeError:
 def emote_to_html(emote):
     if emote in (
         "HACKERMAN",
-        # "YEEHAW",
-        # "PARDNER",
+        "YEEHAW",
+        "PARDNER",
         "BibleThump",
         "PepeHands",
         "Slumlord",
@@ -29,8 +29,6 @@ def emote_to_html(emote):
             if e["prefix"] == emote:
                 img_link = e["image"][0]["url"]
         html = a(img(src=img_link), href=f"/emotes/{emote}")
-    elif emote == "ATAB":
-        html = a("ATAB", href=f"/emotes/{emote}")
     else:
         html = a(div(title=emote, cls=f"emote {emote}"), href=f"/emotes/{emote}")
     return html
