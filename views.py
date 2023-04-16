@@ -54,7 +54,7 @@ def emotes_top_api_response(emote):
 @views.route("/donate")
 def donate():
     dono_message = (
-        "This site costs about $10/month to host. If you enjoy my work and "
+        "My projects cost about $10/month to host. If you enjoy my work and "
         "are feeling generous, a donation of any amount would be much appreciated! "
     )
     with div(align="center") as container:
