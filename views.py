@@ -61,6 +61,12 @@ def donate():
         emote_to_html("dggL")
         p(dono_message, align="center", style="width:400px")
         iframe(
+            id="github sponsors",
+            src="https://github.com/sponsors/tenacious210/card",
+            style="border:none;width:450px;height:150px;padding:4px",
+        )
+        p()
+        iframe(
             id="kofiframe",
             src="https://ko-fi.com/tenadev/?hidefeed=true&widget=true&embed=true&preview=true",
             style="border:none;width:400px;height:615px;padding:4px;background:#1e1e1e;",
