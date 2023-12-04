@@ -14,8 +14,8 @@ except JSONDecodeError:
 def emote_to_html(emote):
     if emote in (
         "HACKERMAN",
-        "YEEHAW",
-        "PARDNER",
+        # "YEEHAW",
+        # "PARDNER",
         "BibleThump",
         "PepeHands",
         "Slumlord",
