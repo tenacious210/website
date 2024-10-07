@@ -19,10 +19,8 @@ def emote_to_html(emote):
         "BibleThump",
         "PepeHands",
         "Slumlord",
-        "LOVE",
+        "TRUELOVE",
         "Blubstiny",
-        "GRUGingOverIt",
-        "Painstiny",
         "WORTH",
     ):
         for e in emote_json:
