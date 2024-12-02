@@ -14,14 +14,15 @@ except JSONDecodeError:
 def emote_to_html(emote):
     if emote in (
         "HACKERMAN",
-        "YEEHAW",
-        "PARDNER",
+        # "YEEHAW",
+        # "PARDNER",
         "BibleThump",
         "PepeHands",
         "Slumlord",
         "TRUELOVE",
         "Blubstiny",
         "WORTH",
+        "Painstiny",
     ):
         for e in emote_json:
             if e["prefix"] == emote:
