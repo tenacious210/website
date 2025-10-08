@@ -22,7 +22,7 @@ def emote_to_html(emote):
         "TRUELOVE",
         "Blubstiny",
         "WORTH",
-        "Painstiny",
+        # "Painstiny",
     ):
         for e in emote_json:
             if e["prefix"] == emote:
